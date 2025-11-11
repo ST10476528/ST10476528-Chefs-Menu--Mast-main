@@ -2,29 +2,36 @@ import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 
 const MenuScreen: React.FC<any> = ({ favorites, onToggleFavorite, onNavigateToDetail, onNavigateToAdmin }) => {
-  // Simple inline placeholder menu data
+  // Friendly sample menu data
   const sampleItems = [
-    { id: '1', name: 'Sample Dish', description: 'Tasty sample dish', price: 9.99 },
-    { id: '2', name: 'Another Dish', description: 'Delicious sample', price: 12.5 },
+    { id: '1', name: "Chef's Special: Herb-Roasted Chicken 🍗", description: 'Juicy chicken roasted with fresh herbs and lemon. Served with seasonal veggies.', price: 14.5 },
+    { id: '2', name: 'Garden Pasta 🌿', description: 'Penne tossed with roasted cherry tomatoes, garlic, and basil. Light and satisfying.', price: 11.25 },
   ];
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Menu</Text>
+      <Text style={styles.title}>Welcome to Chef’s Menu</Text>
+      <Text style={styles.message}>Browse our dishes below — tap Details to learn more.</Text>
+
       {sampleItems.map(item => (
-        <View key={item.id} style={{ marginBottom: 12 }}>
-          <Text style={{ fontSize: 18 }}>{item.name} - ${item.price}</Text>
-          <Text style={{ marginBottom: 4 }}>{item.description}</Text>
-          <Button title="Details" onPress={() => onNavigateToDetail(item)} />
-          <View style={{ height: 8 }} />
-          <Button
-            title={favorites && favorites.has(item.id) ? 'Unfavorite' : 'Favorite'}
-            onPress={() => onToggleFavorite(item.id)}
-          />
+        <View key={item.id} style={{ marginBottom: 14, width: '100%' }}>
+          <Text style={{ fontSize: 18, fontWeight: '600' }}>
+            {item.name} — ${item.price.toFixed(2)}
+          </Text>
+          <Text style={{ marginBottom: 6 }}>{item.description}</Text>
+
+          <View style={{ flexDirection: 'row', gap: 8, marginBottom: 6 }}>
+            <Button title="View details" onPress={() => onNavigateToDetail(item)} />
+            <Button
+              title={favorites && favorites.has(item.id) ? '♥ Remove' : '♡ Favorite'}
+              onPress={() => onToggleFavorite(item.id)}
+            />
+          </View>
         </View>
       ))}
+
       <View style={{ height: 12 }} />
-      <Button title="Admin" onPress={onNavigateToAdmin} />
+      <Button title="Admin (staff only)" onPress={onNavigateToAdmin} />
     </View>
   );
 };
@@ -33,8 +40,8 @@ const DetailScreen: React.FC<any> = ({ item, quantity, setQuantity, onBack, onSu
   if (!item) {
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>No item selected.</Text>
-        <Button title="Back" onPress={onBack} />
+        <Text style={styles.message}>No item selected. Try returning to the menu.</Text>
+        <Button title="Back to Menu" onPress={onBack} />
       </View>
     );
   }
@@ -43,38 +50,44 @@ const DetailScreen: React.FC<any> = ({ item, quantity, setQuantity, onBack, onSu
     <View style={styles.container}>
       <Text style={styles.title}>{item.name}</Text>
       <Text style={styles.message}>{item.description}</Text>
-      <Text style={styles.message}>Quantity: {quantity}</Text>
-      <View style={{ flexDirection: 'row', gap: 8, marginBottom: 8 }}>
-        <Button title="-" onPress={() => setQuantity(Math.max(1, quantity - 1))} />
+      <Text style={styles.message}>Price: ${item.price.toFixed(2)}</Text>
+      <Text style={styles.message}>How many would you like?</Text>
+
+      <View style={{ flexDirection: 'row', gap: 8, marginBottom: 12 }}>
+        <Button title="−" onPress={() => setQuantity(Math.max(1, quantity - 1))} />
+        <View style={{ justifyContent: 'center', paddingHorizontal: 12 }}>
+          <Text style={{ fontSize: 16 }}>Qty: {quantity}</Text>
+        </View>
         <Button title="+" onPress={() => setQuantity(quantity + 1)} />
       </View>
-      <Button title="Place Order" onPress={onSuccess} />
+
+      <Button title="Place my order" onPress={onSuccess} />
       <View style={{ height: 8 }} />
-      <Button title="Back" onPress={onBack} />
+      <Button title="Back to Menu" onPress={onBack} />
     </View>
   );
 };
 
 const SplashScreen: React.FC<{ onNavigate: () => void }> = ({ onNavigate }) => (
   <View style={styles.container}>
-    <Text style={styles.title}>Welcome</Text>
-    <Text style={styles.message}>Loading...</Text>
-    <Button title="Enter" onPress={onNavigate} />
+    <Text style={styles.title}>Hey there 👋</Text>
+    <Text style={styles.message}>Welcome to the app — ready to explore Chef’s favorites?</Text>
+    <Button title="Let’s go" onPress={onNavigate} />
   </View>
 );
 
 const AdminScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => (
   <View style={styles.container}>
-    <Text style={styles.title}>Admin</Text>
-    <Text style={styles.message}>Admin panel placeholder.</Text>
-    <Button title="Back" onPress={onBack} />
+    <Text style={styles.title}>Admin Panel</Text>
+    <Text style={styles.message}>This is a placeholder for staff actions. Be careful — changes affect the menu.</Text>
+    <Button title="Return to Menu" onPress={onBack} />
   </View>
 );
 
 const SuccessScreen: React.FC<{ onBack: () => void }> = ({ onBack }) => (
   <View style={styles.container}>
-    <Text style={styles.title}>Success</Text>
-    <Text style={styles.message}>Your order was placed successfully.</Text>
+    <Text style={styles.title}>Thanks — order placed!</Text>
+    <Text style={styles.message}>We’re preparing your meal. You’ll receive a confirmation shortly.</Text>
     <Button title="Back to Menu" onPress={onBack} />
   </View>
 );
